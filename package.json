@@ -1,0 +1,36 @@
+{
+  "name": "website",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "release": "npm ci && npm run lint && npm run build",
+    "test": "echo",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview",
+    "prepare": "husky",
+    "lint": "oxlint && oxfmt --check",
+    "format": "oxlint --fix && oxfmt",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck",
+    "clean": "rm -rf node_modules",
+    "deploy": "npm run build && wrangler deploy",
+    "preview:cloudflare": "npm run build && wrangler dev"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "husky": "^9.1.7",
+    "oxfmt": "^0.70.0",
+    "oxlint": "^1.85.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "wrangler": "^4.136.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true,
+    "workerd@1.20260921.1": true
+  }
+}
