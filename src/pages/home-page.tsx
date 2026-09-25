@@ -23,7 +23,6 @@ export function HomePage() {
               title="Billable hours"
               description="A billable hours calculator for attorneys."
               href="/apps/billable-hours"
-              status="Coming soon"
             />
           </li>
         </ul>

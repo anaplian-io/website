@@ -5,7 +5,7 @@ interface AppCardProps {
   title: string;
   description: string;
   href: string;
-  status: string;
+  status?: string;
 }
 
 export function AppCard({ title, description, href, status }: AppCardProps) {
@@ -16,7 +16,7 @@ export function AppCard({ title, description, href, status }: AppCardProps) {
         <ArrowUpRight size={18} aria-hidden="true" />
       </div>
       <p>{description}</p>
-      <span className="status">{status}</span>
+      {status && <span className="status">{status}</span>}
     </Link>
   );
 }
