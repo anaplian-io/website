@@ -13,19 +13,19 @@ function renderPage(path = "/") {
 }
 
 describe("personal website", () => {
-  it("opens the app placeholder and returns home", async () => {
+  it("opens the app app and returns home", async () => {
     const user = userEvent.setup();
     renderPage();
     await user.click(screen.getByRole("link", { name: /Billable hours/ }));
     expect(screen.getByRole("heading", { level: 1, name: "Billable hours" })).toBeVisible();
-    expect(screen.getByText("Coming soon")).toBeVisible();
+    expect(await screen.findByRole("button", { name: "Add your first client" })).toBeVisible();
     expect(screen.queryByRole("spinbutton")).not.toBeInTheDocument();
     expect(document.title).toBe("Billable hours · Anaplian.io");
     await user.click(screen.getByRole("link", { name: "Anaplian.io" }));
     expect(screen.getByRole("heading", { name: /Apps/ })).toBeVisible();
   });
 
-  it("supports a direct link to the placeholder", () => {
+  it("supports a direct link to the app", () => {
     renderPage("/apps/billable-hours");
     expect(screen.getByRole("heading", { name: "Billable hours" })).toBeVisible();
     expect(screen.getByRole("link", { name: "Anaplian.io" })).toHaveAttribute("href", "/");

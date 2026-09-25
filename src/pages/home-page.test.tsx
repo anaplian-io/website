@@ -3,7 +3,7 @@ import { MemoryRouter } from "react-router";
 import { expect, it } from "vitest";
 import { HomePage } from "./home-page.tsx";
 
-it("introduces the site and lists the upcoming app", () => {
+it("introduces the site and lists the available app", () => {
   render(
     <MemoryRouter>
       <HomePage />
@@ -19,6 +19,6 @@ it("introduces the site and lists the upcoming app", () => {
     "href",
     "/apps/billable-hours",
   );
-  expect(apps.getByText("Coming soon")).toBeVisible();
+  expect(apps.queryByText("Coming soon")).not.toBeInTheDocument();
   expect(document.title).toBe("Ethan Fortner — Software Engineer in NYC | Anaplian.io");
 });
