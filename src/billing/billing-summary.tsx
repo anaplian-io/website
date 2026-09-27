@@ -1,25 +1,22 @@
-import type { Task } from "./storage.ts";
-import { billableHours } from "./time.ts";
+import type { TaskTotals } from "./storage.ts";
 
 interface BillingSummaryProps {
-  tasks: Task[];
+  totals: TaskTotals;
   filtered: boolean;
 }
 
-export function BillingSummary({ tasks, filtered }: BillingSummaryProps) {
-  const total = tasks.reduce((sum, task) => sum + billableHours(task.start, task.end), 0);
-  const openCount = tasks.filter((task) => !task.end).length;
+export function BillingSummary({ totals, filtered }: BillingSummaryProps) {
   return (
     <section className="billing-summary" aria-label="Hours summary">
       <div>
         <span>Billable hours</span>
         <strong>
-          {total.toFixed(1)} <small>hrs</small>
+          {totals.hours.toFixed(1)} <small>hrs</small>
         </strong>
       </div>
       <div>
         <span>Open tasks</span>
-        <strong>{openCount}</strong>
+        <strong>{totals.openCount}</strong>
       </div>
       <p>
         Completed tasks rounded to the nearest 6 minutes.

@@ -1,4 +1,5 @@
-import type { Client, Task } from "./storage.ts";
+import type { Client, Task, TaskTotals } from "./storage.ts";
+import { TaskPagination } from "./task-pagination.tsx";
 import { BillingSummary } from "./billing-summary.tsx";
 import { TaskToolbar } from "./task-toolbar.tsx";
 import { TaskForm } from "./task-form.tsx";
@@ -10,6 +11,11 @@ export type TaskEditor = Task | "new" | null;
 interface TaskWorkspaceProps {
   clients: Client[];
   tasks: Task[];
+  totals: TaskTotals;
+  hasMore: boolean;
+  loadingMore: boolean;
+  pageError: string;
+  onLoadMore: () => Promise<void>;
   timezone: string;
   filter: string;
   editor: TaskEditor;
@@ -23,6 +29,11 @@ interface TaskWorkspaceProps {
 export function TaskWorkspace({
   clients,
   tasks,
+  totals,
+  hasMore,
+  loadingMore,
+  pageError,
+  onLoadMore,
   timezone,
   filter,
   editor,
@@ -32,10 +43,6 @@ export function TaskWorkspace({
   onSave,
   onDelete,
 }: TaskWorkspaceProps) {
-  const visibleTasks = tasks
-    .filter((task) => !filter || task.clientId === filter)
-    .sort((a, b) => b.start.localeCompare(a.start));
-
   async function saveTask(task: Task) {
     await onSave(task);
     onEdit(null);
@@ -43,7 +50,7 @@ export function TaskWorkspace({
 
   return (
     <>
-      <BillingSummary tasks={visibleTasks} filtered={Boolean(filter)} />
+      <BillingSummary totals={totals} filtered={Boolean(filter)} />
       <TaskToolbar
         clients={clients}
         filter={filter}
@@ -61,7 +68,7 @@ export function TaskWorkspace({
           onCancel={() => onEdit(null)}
         />
       )}
-      {!clients.length || !visibleTasks.length ? (
+      {!clients.length || !tasks.length ? (
         <TaskEmptyState
           hasClients={clients.length > 0}
           filtered={Boolean(filter)}
@@ -69,7 +76,7 @@ export function TaskWorkspace({
         />
       ) : (
         <TaskList
-          tasks={visibleTasks}
+          tasks={tasks}
           clients={clients}
           timezone={timezone}
           editing={editor !== null}
@@ -78,6 +85,13 @@ export function TaskWorkspace({
           onDelete={onDelete}
         />
       )}
+      <TaskPagination
+        hasMore={hasMore}
+        loading={loadingMore}
+        error={pageError}
+        disabled={editor !== null}
+        onLoadMore={onLoadMore}
+      />
     </>
   );
 }

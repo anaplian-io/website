@@ -6,7 +6,7 @@ it("supports creating, renaming, cancelling and deleting unreferenced clients", 
   const user = userEvent.setup();
   const props = {
     clients: [],
-    tasks: [],
+    usedClientIds: new Set<string>(),
     onSave: vi.fn().mockResolvedValue(undefined),
     onDelete: vi.fn().mockResolvedValue(undefined),
   };
@@ -26,9 +26,7 @@ it("supports creating, renaming, cancelling and deleting unreferenced clients", 
     <ClientManager
       {...props}
       clients={[{ id: "c", name: "Client" }]}
-      tasks={[
-        { id: "t", clientId: "c", description: "", start: "2026-01-01T00:00:00Z", end: null },
-      ]}
+      usedClientIds={new Set(["c"])}
     />,
   );
   expect(screen.getByRole("button", { name: "Delete Client" })).toBeDisabled();

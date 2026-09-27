@@ -11,11 +11,11 @@ import { useBillingRecords } from "../billing/use-billing-records.ts";
 import { useTimezone } from "../billing/use-timezone.ts";
 
 export function BillableHoursPage() {
-  const records = useBillingRecords();
+  const [filter, setFilter] = useState("");
+  const records = useBillingRecords(filter);
   const timezone = useTimezone();
   const [tab, setTab] = useState<BillingTab>("tasks");
   const [editor, setEditor] = useState<TaskEditor>(null);
-  const [filter, setFilter] = useState("");
 
   function changeTab(value: BillingTab) {
     setTab(value);
@@ -40,10 +40,12 @@ export function BillableHoursPage() {
       <BillingError message={records.error || timezone.error} />
       {records.loading ? (
         <p role="status">Loading your records…</p>
+      ) : records.error ? (
+        <button onClick={records.refresh}>Retry loading records</button>
       ) : tab === "clients" ? (
         <ClientManager
           clients={records.clients}
-          tasks={records.tasks}
+          usedClientIds={records.usedClientIds}
           onSave={records.saveClient}
           onDelete={deleteClient}
         />
@@ -51,6 +53,11 @@ export function BillableHoursPage() {
         <TaskWorkspace
           clients={records.clients}
           tasks={records.tasks}
+          totals={records.totals}
+          hasMore={records.hasMore}
+          loadingMore={records.loadingMore}
+          pageError={records.pageError}
+          onLoadMore={records.loadMore}
           timezone={timezone.timezone}
           filter={filter}
           editor={editor}
