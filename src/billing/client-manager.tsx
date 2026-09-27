@@ -1,4 +1,4 @@
-import type { Client, Task } from "./storage.ts";
+import type { Client } from "./storage.ts";
 import { useClientManager } from "./use-client-manager.ts";
 import { ClientForm } from "./client-form.tsx";
 import { ClientRow } from "./client-row.tsx";
@@ -6,12 +6,12 @@ import { BillingError } from "./billing-error.tsx";
 
 interface ClientManagerProps {
   clients: Client[];
-  tasks: Task[];
+  usedClientIds: Set<string>;
   onSave: (client: Client) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
 }
 
-export function ClientManager({ clients, tasks, onSave, onDelete }: ClientManagerProps) {
+export function ClientManager({ clients, usedClientIds, onSave, onDelete }: ClientManagerProps) {
   const form = useClientManager({ onSave, onDelete });
   return (
     <section className="billing-panel" aria-labelledby="clients-heading">
@@ -31,7 +31,7 @@ export function ClientManager({ clients, tasks, onSave, onDelete }: ClientManage
           <ClientRow
             key={client.id}
             client={client}
-            used={tasks.some((task) => task.clientId === client.id)}
+            used={usedClientIds.has(client.id)}
             busy={form.busy}
             onEdit={() => form.edit(client)}
             onDelete={() => void form.remove(client.id)}

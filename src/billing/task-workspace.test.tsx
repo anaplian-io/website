@@ -18,7 +18,12 @@ function Workspace({
   return (
     <TaskWorkspace
       clients={clients}
-      tasks={tasks}
+      tasks={tasks.filter((task) => !filter || task.clientId === filter)}
+      totals={{ hours: 0, openCount: tasks.length }}
+      hasMore={false}
+      loadingMore={false}
+      pageError=""
+      onLoadMore={async () => undefined}
       timezone="America/New_York"
       filter={filter}
       editor={editor}
@@ -41,7 +46,7 @@ it("opens and cancels a new task and closes the editor after saving", async () =
   await user.click(screen.getByRole("button", { name: "Save task" }));
   expect(screen.queryByRole("heading", { name: "New task" })).not.toBeInTheDocument();
 });
-it("sorts latest tasks first, filters by client and edits existing tasks", async () => {
+it("preserves database ordering, changes the filter and edits existing tasks", async () => {
   const user = userEvent.setup();
   const task = {
     id: "old",
@@ -52,7 +57,7 @@ it("sorts latest tasks first, filters by client and edits existing tasks", async
   };
   render(
     <Workspace
-      tasks={[task, { ...task, id: "new", description: "Newer", start: "2026-01-02T00:00:00Z" }]}
+      tasks={[{ ...task, id: "new", description: "Newer", start: "2026-01-02T00:00:00Z" }, task]}
       clients={[
         { id: "c", name: "Client" },
         { id: "empty", name: "Empty" },
